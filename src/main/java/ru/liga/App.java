@@ -5,21 +5,20 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.liga.view.Bot;
 
-import java.util.Map;
-
 
 /**
  *
  */
 public class App {
-    private static final Map<String, String> getenv = System.getenv();
+    static String BOT_NAME = "CurrencyTelegramBot";
+    static String BOT_TOKEN = "5201090499:AAGnczO3fuwdARl9L76rruLZndB-dNG9eZo";
 
 
     public static void main(String[] args) {
 
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-            botsApi.registerBot(new Bot(getenv.get("BOT_NAME"), getenv.get("BOT_TOKEN")));
+            botsApi.registerBot(new Bot(BOT_NAME, BOT_TOKEN));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
