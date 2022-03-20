@@ -5,12 +5,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.liga.view.Bot;
 
-import java.util.Map;
 
 
-/**
- *
- */
 public class App {
     static String BOT_NAME = "CurrencyTelegramBot";
     static String BOT_TOKEN = "5201090499:AAGnczO3fuwdARl9L76rruLZndB-dNG9eZo";

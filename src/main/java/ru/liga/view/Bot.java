@@ -43,10 +43,9 @@ public class Bot extends TelegramLongPollingBot {
      * Отправка ответа
      *
      * @param chatId   id чата
-     * @param userName имя пользователя
      * @param text     текст ответа
      */
-    private void setAnswer(Long chatId, String userName, String text) {
+    private void setAnswer(Long chatId, String text) {
         SendMessage answer = new SendMessage();
         answer.setText(text);
         answer.setChatId(chatId.toString());
@@ -59,6 +58,7 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        ControllerSelection.getController(update.getMessage().getText()).operate();
+        String answer = ControllerSelection.getController(update.getMessage().getText()).operate();
+        setAnswer(update.getMessage().getChatId(), answer);
     }
 }

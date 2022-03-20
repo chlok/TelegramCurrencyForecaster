@@ -28,6 +28,7 @@ public class RateController implements Controller {
     private final String[] commands;
     private final RatesRepository repository;
 
+
     public RateController(String[] commands, RatesRepository repository) {
         this.commands = commands;
         this.repository = repository;
@@ -110,7 +111,7 @@ public class RateController implements Controller {
             case "list" -> {
                 return RateFormatter.getStringWeekRate(ratesLists.get(0));
             }
- //           case "graph" -> {return  new Graph().drawGraph(ratesLists, forecastPeriod);};
+          //  case "graph" -> {return  new Graph().drawGraph(ratesLists, forecastPeriod);};
             default -> {
                 return "выбранный формат вывода отсутсвует в приложении!";
             }
