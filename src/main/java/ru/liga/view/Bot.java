@@ -27,6 +27,17 @@ public class Bot extends TelegramLongPollingBot {
         return BOT_NAME;
     }
 
+    /**
+     * метод для обработки команд в телеграмме
+     *
+     * @param update
+     */
+    @Override
+    public void onUpdateReceived(Update update) {
+        String answer = ControllerSelection.getController(update.getMessage().getText()).operate();
+        setAnswer(update.getMessage().getChatId(), answer);
+    }
+
 
     /**
      * Формирование имени пользователя
@@ -42,23 +53,19 @@ public class Bot extends TelegramLongPollingBot {
     /**
      * Отправка ответа
      *
-     * @param chatId   id чата
-     * @param text     текст ответа
+     * @param chatId id чата
+     * @param text   текст ответа
      */
     private void setAnswer(Long chatId, String text) {
         SendMessage answer = new SendMessage();
-        answer.setText(text);
-        answer.setChatId(chatId.toString());
-        try {
-            execute(answer);
-        } catch (TelegramApiException e) {
-            //логируем сбой Telegram Bot API, используя userName
+        if (text != null) {
+            answer.setText(text);
+            answer.setChatId(chatId.toString());
+            try {
+                execute(answer);
+            } catch (TelegramApiException e) {
+                //логируем сбой Telegram Bot API, используя userName
+            }
         }
-    }
-
-    @Override
-    public void onUpdateReceived(Update update) {
-        String answer = ControllerSelection.getController(update.getMessage().getText()).operate();
-        setAnswer(update.getMessage().getChatId(), answer);
     }
 }

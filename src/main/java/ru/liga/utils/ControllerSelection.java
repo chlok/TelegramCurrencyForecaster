@@ -10,7 +10,6 @@ import java.util.Locale;
 
 /**
  * Класс отвечающий за выбор контроллера, который будет работать с поступившей командой
- *
  */
 public class ControllerSelection {
     private static final String separator = " ";

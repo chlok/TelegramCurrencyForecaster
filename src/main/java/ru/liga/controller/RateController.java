@@ -34,6 +34,11 @@ public class RateController implements Controller {
         this.repository = repository;
     }
 
+    /**
+     * метод для обработки ввода
+     *
+     * @return результат обработки ввода
+     */
     @Override
     public String operate() {
         if (!commands[0].equalsIgnoreCase("rate")) {
@@ -77,14 +82,15 @@ public class RateController implements Controller {
     private String operateDateForecast(ForecastService service) {
         LocalDate date;
         Currency currency;
+        Rate rate;
         try {
             date = getDate(commands[3]);
             currency = getCurrency(commands[1]);
+            rate = service.getRate(currency, date);
         } catch (IllegalArgumentException e) {
             return e.getMessage();
         }
 
-        Rate rate = service.getRate(currency, date);
         return RateFormatter.getStringDayRate(rate);
     }
 
@@ -111,7 +117,10 @@ public class RateController implements Controller {
             case "list" -> {
                 return RateFormatter.getStringWeekRate(ratesLists.get(0));
             }
-          //  case "graph" -> {return  new Graph().drawGraph(ratesLists, forecastPeriod);};
+            case "graph" -> {
+                new Graph().drawGraph(ratesLists, forecastPeriod);
+                return null;
+            }
             default -> {
                 return "выбранный формат вывода отсутсвует в приложении!";
             }
@@ -132,7 +141,7 @@ public class RateController implements Controller {
         switch (commands[5]) {
             case "moon" -> service = new MysticService(repository);
             case "actual" -> service = new ActualService(repository);
-            case "regression:" -> service = new LinearRegressionService(repository);
+            case "regression" -> service = new LinearRegressionService(repository);
         }
         return service;
     }

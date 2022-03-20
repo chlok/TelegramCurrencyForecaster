@@ -19,10 +19,20 @@ public class SystemController implements Controller {
             case "help" -> {
                 return """
                         Cписок доступных комманд:
+                                                
                         \thelp     - помощь
-                        \trate     - прогноз курсов валют, с этой командой необходимо указывать валюту (USD, EUR, TRY),
-                        \tа так же период прогноза, на 1 день или на неделю (tomorrow или week)
-                        \tпараметры команды необходимо указывать через пробел (пример: rate TRY tomorrow)
+                                                
+                        \trate     - прогноз курсов валют, с этой командой необходимо указывать одну или 
+                        \tнесколько валют (USD, EUR, TRY, AMD, BGN, несколько - только в случае выбора периода),
+                        \tпериод(week, month), алгоритм(moon, regression, actual), при выборе периода - формат
+                        \tвывода (list, graph)
+                        \tПримеры запросов:
+                        \trate TRY -date tomorrow -alg moon
+                        \trate TRY -date 22.02.2030 -alg moon
+                        \trate USD -period week -alg moon -output list
+                        \trate USD,TRY -period month -alg moon -output graph
+                        \tа так же период прогноза
+                                                
                         \texit     - завершение программы""";
             }
             case "exit" -> {

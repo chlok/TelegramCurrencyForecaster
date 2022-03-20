@@ -13,14 +13,6 @@ public class RateFormatter {
         scanner = new Scanner(System.in);
     }
 
-    public String insertCommand() {
-        System.out.print("Введите команду: ");
-        return scanner.nextLine();
-    }
-
-    public void printMessage(String text) {
-        System.out.println(text);
-    }
 
     public static String getStringDayRate(Rate rate) {
         return String.format("%s - %s", rate.getDate().format(DateTimeUtil.PRINT_FORMATTER), String.format("%.2f", rate.getRate()));

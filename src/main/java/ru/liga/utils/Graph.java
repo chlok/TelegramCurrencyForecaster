@@ -1,16 +1,13 @@
 package ru.liga.utils;
 
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.ui.ApplicationFrame;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import ru.liga.model.Rate;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,11 +19,21 @@ public class Graph {
     private static final String VALUE = "value";
 
 
-    public byte[] drawGraph(List<List<Rate>> ratesList, ForecastPeriod forecastPeriod) {
+    /**
+     * метод для рисования графика курсов валют
+     *
+     * @param ratesList      список курсов
+     * @param forecastPeriod период прогнозирования
+     */
+    public void drawGraph(List<List<Rate>> ratesList, ForecastPeriod forecastPeriod) {
 
         CategoryDataset dataset = createDataset(ratesList);
-        JFreeChart chart = ChartFactory.createLineChart(GRAPH_NAME + "\n" + forecastPeriod , DOMAIN, VALUE, dataset);
-        return getImageByteArray(chart);
+        JFreeChart chart = ChartFactory.createLineChart(GRAPH_NAME + "\n" + forecastPeriod, DOMAIN, VALUE, dataset);
+        ChartPanel chartPanel = new ChartPanel(chart);
+        ApplicationFrame frame = new ApplicationFrame(GRAPH_NAME);
+        frame.setContentPane(chartPanel);
+        frame.pack();
+        frame.setVisible(true);
     }
 
     private CategoryDataset createDataset(List<List<Rate>> ratesList) {
@@ -38,19 +45,6 @@ public class Graph {
             }
         }
         return dataset;
-    }
-
-
-    private byte[] getImageByteArray (JFreeChart chart) {
-        BufferedImage objBufferedImage = chart.createBufferedImage(600, 800);
-        ByteArrayOutputStream bas = new ByteArrayOutputStream();
-        try {
-            ImageIO.write(objBufferedImage, "png", bas);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        File file = new File("resources");
-        return bas.toByteArray();
     }
 }
 

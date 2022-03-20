@@ -10,6 +10,11 @@ public class DefaultController implements Controller {
         this.command = command;
     }
 
+    /**
+     * Метод для обработки некорректного ввода
+     *
+     * @return строка, сообщающая о некорректном вводе
+     */
     @Override
     public String operate() {
         return "Введена неверная команда: " + "\"" + command + "\"" +

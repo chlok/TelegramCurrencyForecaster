@@ -6,7 +6,7 @@ import ru.liga.repository.RatesRepository;
 import ru.liga.utils.ForecastPeriod;
 
 import java.time.LocalDate;
-import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,35 +18,49 @@ public class LinearRegressionService implements ForecastService {
         this.repository = repository;
     }
 
+    /**
+     * метод для получения курса на определенную дату
+     *
+     * @param currency валюта
+     * @param date     дата
+     * @return курс
+     */
     @Override
     public Rate getRate(Currency currency, LocalDate date) {
-        int daysUntilDate = Period.between(LocalDate.now(), date).getDays();
-        int lastMonthDays = Period.between(LocalDate.now().minusMonths(1), LocalDate.now()).getDays();
+        int daysUntilDate = (int) ChronoUnit.DAYS.between(LocalDate.now(), date);
+        int lastMonthDays = (int) ChronoUnit.DAYS.between(LocalDate.now().minusMonths(1), LocalDate.now());
         LinearRegression linearRegression = getLinearRegression(lastMonthDays, date, currency);
         return new Rate(date, linearRegression.predict(lastMonthDays + daysUntilDate), currency);
 
     }
 
+    /**
+     * метод для получения списка курсов на определенный период
+     *
+     * @param currency валюта
+     * @param period   период
+     * @return список курсов
+     */
     @Override
     public List<Rate> getPeriodRates(Currency currency, ForecastPeriod period) {
         List<Rate> rates = new ArrayList<>();
         LocalDate lastDate = null;
-        switch (period){
+        switch (period) {
             case WEEK -> lastDate = LocalDate.now().plusDays(7);
             case MONTH -> lastDate = LocalDate.now().plusMonths(1);
         }
-        int lastMonthDays = Period.between(LocalDate.now().minusMonths(1), LocalDate.now()).getDays();
+        int lastMonthDays = (int) ChronoUnit.DAYS.between(LocalDate.now().minusMonths(1), LocalDate.now());
         LinearRegression linearRegression = getLinearRegression(lastMonthDays, lastDate, currency);
         LocalDate currentDate = LocalDate.now();
-        while (!currentDate.isAfter(lastDate)){
+        while (!currentDate.isAfter(lastDate)) {
             currentDate = currentDate.plusDays(1);
-            int daysUntilDate = Period.between(LocalDate.now(), currentDate).getDays();
+            int daysUntilDate = (int) ChronoUnit.DAYS.between(LocalDate.now(), currentDate);
             rates.add(new Rate(currentDate, linearRegression.predict(lastMonthDays + daysUntilDate), currency));
         }
         return rates;
     }
 
-    private LinearRegression getLinearRegression(int lastDaysForCount, LocalDate date, Currency currency){
+    private LinearRegression getLinearRegression(int lastDaysForCount, LocalDate date, Currency currency) {
         double[] rateValues = repository.getPeriodRates(currency, lastDaysForCount).stream()
                 .mapToDouble(Rate::getRate)
                 .toArray();
@@ -140,24 +154,6 @@ class LinearRegression {
      */
     public double R2() {
         return r2;
-    }
-
-    /**
-     * Returns the standard error of the estimate for the intercept.
-     *
-     * @return the standard error of the estimate for the intercept
-     */
-    public double interceptStdErr() {
-        return Math.sqrt(svar0);
-    }
-
-    /**
-     * Returns the standard error of the estimate for the slope.
-     *
-     * @return the standard error of the estimate for the slope
-     */
-    public double slopeStdErr() {
-        return Math.sqrt(svar1);
     }
 
     /**

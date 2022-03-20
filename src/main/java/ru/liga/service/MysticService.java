@@ -17,6 +17,13 @@ public class MysticService implements ForecastService {
         this.repository = repository;
     }
 
+    /**
+     * метод для получения курса на определенную дату
+     *
+     * @param currency валюта
+     * @param date     дата
+     * @return курс
+     */
     @Override
     public Rate getRate(Currency currency, LocalDate date) {
         List<Rate> lastFullMoonsRates = repository.getLastFullMoonsRates(currency, 3);
@@ -32,6 +39,13 @@ public class MysticService implements ForecastService {
         return new Rate(date, getAverageValue(lastFullMoonsRates), currency);
     }
 
+    /**
+     * метод для получения списка курсов на определенный период
+     *
+     * @param currency валюта
+     * @param period   период
+     * @return список курсов
+     */
     @Override
     public List<Rate> getPeriodRates(Currency currency, ForecastPeriod period) {
         LocalDate lastDate = null;
