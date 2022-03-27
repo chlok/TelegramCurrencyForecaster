@@ -1,5 +1,8 @@
 package ru.liga.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.liga.App;
 import ru.liga.model.Currency;
 import ru.liga.model.Rate;
 
@@ -7,11 +10,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -21,7 +26,8 @@ import java.util.Locale;
  */
 public class ParseRateCsv {
 
-    private static final String separator = ";";
+    private static final String SEPARATOR = ";";
+    private static final Logger logger = LoggerFactory.getLogger(ParseRateCsv.class);
 
     /**
      * @param filePath путь к файлу для парсинга
@@ -41,7 +47,7 @@ public class ParseRateCsv {
 
         for (int i = 1; i < fileLines.size(); i++) {
             String fileLine = fileLines.get(i);
-            String[] splitedText = fileLine.split(separator);
+            String[] splitedText = fileLine.split(SEPARATOR);
             ArrayList<String> columnList = new ArrayList<>();
             for (String s : splitedText) {
                 //Если колонка начинается на кавычки или заканчиваеться на кавычки
@@ -54,11 +60,10 @@ public class ParseRateCsv {
             }
 
             //Создаем сущности на основе полученной информации
-            Rate rate = new Rate();
-            rate.setDate(LocalDate.parse(columnList.get(1), DateTimeUtil.PARSE_FORMATTER));
-            rate.setRate(getDoubleFromStringWithComma(columnList.get(2)));
-            rate.setCurrency(getCurrency(columnList.get(3)));
-            rateList.add(rate);
+            LocalDate date = LocalDate.parse(columnList.get(1), DateTimeUtil.PARSE_FORMATTER);
+            BigDecimal rateValue = BigDecimal.valueOf(getDoubleFromStringWithComma(columnList.get(2)));
+            Currency currency = getCurrency(columnList.get(3));
+            rateList.add(new Rate(date, rateValue, currency));
         }
         return rateList;
     }
@@ -89,6 +94,7 @@ public class ParseRateCsv {
         try {
             number = format.parse(string.replaceAll("\"", ""));
         } catch (ParseException e) {
+            logger.debug(e.getClass() + " " + e.getMessage());
             throw new IllegalArgumentException("string is not parseable");
         }
         return number.doubleValue();

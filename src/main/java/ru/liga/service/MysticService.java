@@ -3,8 +3,10 @@ package ru.liga.service;
 import ru.liga.model.Currency;
 import ru.liga.model.Rate;
 import ru.liga.repository.RatesRepository;
-import ru.liga.utils.ForecastPeriod;
+import ru.liga.model.ForecastPeriod;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,13 +19,6 @@ public class MysticService implements ForecastService {
         this.repository = repository;
     }
 
-    /**
-     * метод для получения курса на определенную дату
-     *
-     * @param currency валюта
-     * @param date     дата
-     * @return курс
-     */
     @Override
     public Rate getRate(Currency currency, LocalDate date) {
         List<Rate> lastFullMoonsRates = repository.getLastFullMoonsRates(currency, 3);
@@ -39,36 +34,26 @@ public class MysticService implements ForecastService {
         return new Rate(date, getAverageValue(lastFullMoonsRates), currency);
     }
 
-    /**
-     * метод для получения списка курсов на определенный период
-     *
-     * @param currency валюта
-     * @param period   период
-     * @return список курсов
-     */
     @Override
-    public List<Rate> getPeriodRates(Currency currency, ForecastPeriod period) {
-        LocalDate lastDate = null;
+    public List<Rate> getPeriodRates(Currency currency, LocalDate lastDate) {
         List<Rate> rates = new ArrayList<>();
-        switch (period) {
-            case WEEK -> lastDate = LocalDate.now().plusDays(7);
-            case MONTH -> lastDate = LocalDate.now().plusMonths(1);
-        }
         LocalDate currentDate = LocalDate.now().plusDays(1);
         rates.add(getRate(currency, currentDate));
         while (!currentDate.isAfter(lastDate)) {
             currentDate = currentDate.plusDays(1);
-            double lastRateValue = rates.get(rates.size() - 1).getRate();
-            double randomRate = ThreadLocalRandom.current().nextDouble(lastRateValue * 0.9, lastRateValue * 1.1);
+            BigDecimal lastRateValue = rates.get(rates.size() - 1).getRate();
+            double randomValue = ThreadLocalRandom.current().nextDouble(0.9,1.1);
+            BigDecimal randomRate = lastRateValue.multiply(BigDecimal.valueOf(randomValue));
             rates.add(new Rate(currentDate, randomRate, currency));
         }
         return rates;
     }
 
-    private double getAverageValue(List<Rate> rates) {
-        return rates.stream()
-                .mapToDouble(Rate::getRate)
-                .average()
-                .orElseThrow(() -> new IllegalArgumentException("Отсутствуют данные для расчета средней величины курсов!"));
+    private BigDecimal getAverageValue(List<Rate> rates) {
+        BigDecimal sum = new BigDecimal(0);
+        for (Rate rate:rates){
+            sum = sum.add(rate.getRate());
+        }
+        return sum.divide(new BigDecimal(rates.size()), 3, RoundingMode.HALF_UP);
     }
 }

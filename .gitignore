@@ -5,4 +5,5 @@
 
 target/
 log/
+src/main/resources/TelegramBot.properties
 

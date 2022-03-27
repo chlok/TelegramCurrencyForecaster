@@ -1,5 +1,8 @@
 package ru.liga.repository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.liga.App;
 import ru.liga.model.Currency;
 import ru.liga.model.Rate;
 import ru.liga.utils.ParseDatesFile;
@@ -7,6 +10,8 @@ import ru.liga.utils.ParseRateCsv;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +21,7 @@ import java.util.stream.Collectors;
 
 public class InMemoryRatesRepository implements RatesRepository {
 
+    private static final Logger logger = LoggerFactory.getLogger(InMemoryRatesRepository.class);
     private static List<Rate> usd;
     private static List<Rate> euro;
     private static List<Rate> turkey;
@@ -33,16 +39,10 @@ public class InMemoryRatesRepository implements RatesRepository {
             moonDates = ParseDatesFile.parse("/FULL_MOONS_F01_01_2021_T31_12_2022");
 
         } catch (IOException e) {
-            System.out.println("Ошибка загрузки данных из файлов CSV"); // заменить методом Console
-            e.printStackTrace();
+            logger.debug(e.getClass() + " " + e.getMessage());
         }
     }
 
-    /**
-     * Метод возвращает курсы вылюты за весь период в зависимости от указанной валюты
-     *
-     * @param currency название валюты
-     */
     @Override
     public List<Rate> getAllRates(Currency currency) {
         return switch (currency) {
@@ -54,12 +54,6 @@ public class InMemoryRatesRepository implements RatesRepository {
         };
     }
 
-    /**
-     * Метод возвращает курсы вылюты за последние 7 дней
-     *
-     * @param currency название валюты
-     * @param days     количество дней, ставки за которые нам нужно получить
-     */
 
     @Override
     public List<Rate> getPeriodRates(Currency currency, int days) {
@@ -72,40 +66,31 @@ public class InMemoryRatesRepository implements RatesRepository {
         return all;
     }
 
-    /**
-     * метод возвращает список курсов двух- и трехлетней давности на ту же дату
-     *
-     * @param currency валюта
-     * @param date     дата
-     * @return список курсов
-     */
+
     @Override
     public List<Rate> getTwoAndThreeYearsThisDateRates(Currency currency, LocalDate date) {
         List<Rate> all = getAllRates(currency);
-        return all
-                .stream().filter(x -> (x.getDate().equals(date.minusYears(2)) || x.getDate().equals(date.minusYears(3))))
-                .collect(Collectors.toList());
+        List<Rate> rates = new ArrayList<>();
+        rates.add(getSomeYearsAgoThisDateRates(all, date, 2));
+        rates.add(getSomeYearsAgoThisDateRates(all, date, 3));
+        return rates;
     }
 
-    /**
-     * метод добавляет один объект курса в список
-     *
-     * @param rate     добавляемый курс
-     * @param currency валюта
-     */
+    private Rate getSomeYearsAgoThisDateRates(List<Rate> rates, LocalDate date, int years){
+        return  rates
+                .stream().filter(x -> (x.getDate().equals(date.minusYears(years)) || x.getDate().equals(date.minusYears(years).minusDays(1))
+                        || x.getDate().equals(date.minusYears(years).minusDays(2))))
+                .max((x,y) -> (int) (x.getDate().toEpochDay() - y.getDate().toEpochDay()))
+                .orElseThrow(() -> new IllegalArgumentException("отсутствуют корректные значения для прогноза в базе данных"));
+    }
+
+
     @Override
     public void addRate(Rate rate, Currency currency) {
         List<Rate> all = getAllRates(currency);
         all.add(rate);
     }
 
-    /**
-     * метод возвращает список ставок за даты, приходившиеся на последние полнолуния
-     *
-     * @param currency валюта
-     * @param amount   количество полнолуний
-     * @return список ставок
-     */
     @Override
     public List<Rate> getLastFullMoonsRates(Currency currency, int amount) {
         List<Rate> all = getAllRates(currency);
@@ -116,11 +101,7 @@ public class InMemoryRatesRepository implements RatesRepository {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * метод для получения списка дат, которые придутся на полнолуния в будущем
-     *
-     * @return список дат
-     */
+
     public List<LocalDate> getFutureMoonDates() {
         return moonDates.stream()
                 .filter(x -> x.isAfter(LocalDate.now()))

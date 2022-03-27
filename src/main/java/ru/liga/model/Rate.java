@@ -1,5 +1,7 @@
 package ru.liga.model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -8,51 +10,31 @@ import java.util.Objects;
  */
 
 public class Rate {
-    private LocalDate date;
-    private double rate;
-    private Currency currency;
+    private final LocalDate date;
+    private final BigDecimal rate;
+    private final Currency currency;
 
-    public Rate(LocalDate dateTime, double rate, Currency currency) {
+    public Rate(LocalDate dateTime, BigDecimal rate, Currency currency) {
         this.date = dateTime;
-        this.rate = rate;
         this.currency = currency;
+        this.rate = rate.setScale(3, RoundingMode.HALF_UP);
     }
 
-    public Rate() {
-
+    public BigDecimal getRate() {
+        return rate;
     }
 
     public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public double getRate() {
-        return rate;
-    }
-
-    public void setRate(double rate) {
-        this.rate = rate;
-    }
-
     public Currency getCurrency() {
         return currency;
     }
 
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
-    }
-
     @Override
     public String toString() {
-        return "Rate{" +
-                "date=" + date +
-                ", rate=" + rate +
-                ", title='" + currency + '\'' +
-                '}';
+        return "Rate{" + "date=" + date + ", rate=" + rate + ", title='" + currency + '\'' + '}';
     }
 
     @Override
@@ -60,7 +42,7 @@ public class Rate {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Rate rate1 = (Rate) o;
-        return Double.compare(rate1.rate, rate) == 0 && date.equals(rate1.date) && currency == rate1.currency;
+        return Objects.equals(date, rate1.date) && Objects.equals(rate, rate1.rate) && currency == rate1.currency;
     }
 
     @Override

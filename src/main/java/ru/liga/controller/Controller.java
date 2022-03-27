@@ -1,5 +1,7 @@
 package ru.liga.controller;
 
+import ru.liga.model.TelegramCommand;
+
 public interface Controller {
-    String operate();
+    TelegramCommand operate();
 }

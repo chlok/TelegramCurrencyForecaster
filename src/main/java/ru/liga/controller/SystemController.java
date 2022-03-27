@@ -1,5 +1,7 @@
 package ru.liga.controller;
 
+import ru.liga.model.TelegramCommand;
+
 import java.util.Locale;
 
 /**
@@ -14,14 +16,13 @@ public class SystemController implements Controller {
     }
 
     @Override
-    public String operate() {
+    public TelegramCommand operate() {
         switch (command.toLowerCase(Locale.ROOT)) {
             case "help" -> {
-                return """
+                return new TelegramCommand("""
                         Cписок доступных комманд:
                                                 
                         \thelp     - помощь
-                                                
                         \trate     - прогноз курсов валют, с этой командой необходимо указывать одну или 
                         \tнесколько валют (USD, EUR, TRY, AMD, BGN, несколько - только в случае выбора периода),
                         \tпериод(week, month), алгоритм(moon, regression, actual), при выборе периода - формат
@@ -33,11 +34,11 @@ public class SystemController implements Controller {
                         \trate USD,TRY -period month -alg moon -output graph
                         \tа так же период прогноза
                                                 
-                        \texit     - завершение программы""";
+                        \texit     - завершение программы""");
             }
             case "exit" -> {
                 System.exit(0);
-                return "Exit";
+                return new TelegramCommand("Exit");
             }
             default -> {
                 return new DefaultController(command).operate();
