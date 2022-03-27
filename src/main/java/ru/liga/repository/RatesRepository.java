@@ -35,14 +35,6 @@ public interface RatesRepository {
     List<Rate> getTwoAndThreeYearsThisDateRates(Currency currency, LocalDate date);
 
     /**
-     * метод добавляет один объект курса в список
-     *
-     * @param rate     добавляемый курс
-     * @param currency валюта
-     */
-    void addRate(Rate rate, Currency currency);
-
-    /**
      * метод возвращает список ставок за даты, приходившиеся на последние полнолуния
      *
      * @param currency валюта

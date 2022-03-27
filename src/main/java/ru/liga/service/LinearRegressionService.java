@@ -44,8 +44,9 @@ public class LinearRegressionService implements ForecastService {
 
     private LinearRegression getLinearRegression(int lastDaysForCount, LocalDate date, Currency currency) {
         Double[] rateValues = (Double[]) repository.getPeriodRates(currency, lastDaysForCount).stream()
+                .sorted((x,y) -> x.getDate().compareTo(y.getDate()))
                 .map(rate -> rate.getRate().doubleValue())
-                .toArray();
+                .toArray(Double[]::new);
 
         double[] days = new double[rateValues.length];
         for (int i = 0; i < days.length; i++) {

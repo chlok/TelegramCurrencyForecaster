@@ -45,6 +45,17 @@ public class TelegramCommand {
     public String getMessage() {
         return message;
     }
+
+    @Override
+    public String toString() {
+        return "TelegramCommand{" +
+                "ratesList=" + ratesList +
+                ", rate=" + rate +
+                ", output=" + output +
+                ", currencies=" + currencies +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }
 
 

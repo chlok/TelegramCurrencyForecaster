@@ -2,7 +2,6 @@ package ru.liga.repository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.liga.App;
 import ru.liga.model.Currency;
 import ru.liga.model.Rate;
 import ru.liga.utils.ParseDatesFile;
@@ -11,7 +10,6 @@ import ru.liga.utils.ParseRateCsv;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,25 +69,25 @@ public class InMemoryRatesRepository implements RatesRepository {
     public List<Rate> getTwoAndThreeYearsThisDateRates(Currency currency, LocalDate date) {
         List<Rate> all = getAllRates(currency);
         List<Rate> rates = new ArrayList<>();
-        rates.add(getSomeYearsAgoThisDateRates(all, date, 2));
-        rates.add(getSomeYearsAgoThisDateRates(all, date, 3));
+        rates.add(getSomeYearsAgoThisDateRate(all, date, 2));
+        rates.add(getSomeYearsAgoThisDateRate(all, date, 3));
         return rates;
     }
 
-    private Rate getSomeYearsAgoThisDateRates(List<Rate> rates, LocalDate date, int years){
-        return  rates
-                .stream().filter(x -> (x.getDate().equals(date.minusYears(years)) || x.getDate().equals(date.minusYears(years).minusDays(1))
-                        || x.getDate().equals(date.minusYears(years).minusDays(2))))
-                .max((x,y) -> (int) (x.getDate().toEpochDay() - y.getDate().toEpochDay()))
+    private Rate getSomeYearsAgoThisDateRate(List<Rate> rates, LocalDate date, int years){
+        List<LocalDate> dates = rates.stream()
+                .map(Rate::getDate).toList();
+        LocalDate lastDate = date.minusYears(years);
+        while (!dates.contains(lastDate)){
+            lastDate = lastDate.minusDays(1);
+        }
+        LocalDate finalDate = lastDate;
+        return  rates.stream()
+                .filter(x -> (x.getDate().equals(finalDate)))
+                .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("отсутствуют корректные значения для прогноза в базе данных"));
     }
 
-
-    @Override
-    public void addRate(Rate rate, Currency currency) {
-        List<Rate> all = getAllRates(currency);
-        all.add(rate);
-    }
 
     @Override
     public List<Rate> getLastFullMoonsRates(Currency currency, int amount) {
