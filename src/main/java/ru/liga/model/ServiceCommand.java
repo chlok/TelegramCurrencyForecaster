@@ -4,11 +4,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class ServiceCommand {
-    Output output;
-    LocalDate date;
-    Algorithm algorithm;
-    List<Currency> currencies;
-    ForecastPeriod period;
+    private final Output output;
+    private final LocalDate date;
+    private final Algorithm algorithm;
+    private final List<Currency> currencies;
+    private final ForecastPeriod period;
 
     public ServiceCommand(Output output, LocalDate date, Algorithm algorithm, List<Currency> currencies, ForecastPeriod period) {
         this.output = output;

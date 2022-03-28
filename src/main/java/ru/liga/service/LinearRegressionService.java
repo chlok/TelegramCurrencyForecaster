@@ -3,12 +3,12 @@ package ru.liga.service;
 import ru.liga.model.Currency;
 import ru.liga.model.Rate;
 import ru.liga.repository.RatesRepository;
-import ru.liga.model.ForecastPeriod;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class LinearRegressionService implements ForecastService {
@@ -43,8 +43,8 @@ public class LinearRegressionService implements ForecastService {
     }
 
     private LinearRegression getLinearRegression(int lastDaysForCount, LocalDate date, Currency currency) {
-        Double[] rateValues = (Double[]) repository.getPeriodRates(currency, lastDaysForCount).stream()
-                .sorted((x,y) -> x.getDate().compareTo(y.getDate()))
+        Double[] rateValues = repository.getPeriodRates(currency, lastDaysForCount).stream()
+                .sorted(Comparator.comparing(Rate::getDate))
                 .map(rate -> rate.getRate().doubleValue())
                 .toArray(Double[]::new);
 

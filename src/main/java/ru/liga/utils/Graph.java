@@ -6,7 +6,6 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.liga.App;
 import ru.liga.model.Rate;
 
 import javax.imageio.ImageIO;
@@ -14,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 import static ru.liga.utils.DateTimeUtil.PARSE_FORMATTER;

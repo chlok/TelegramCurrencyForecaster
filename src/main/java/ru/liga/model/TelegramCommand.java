@@ -6,8 +6,8 @@ public class TelegramCommand {
     private final List<List<Rate>> ratesList;
     private final Rate rate;
     private final Output output;
-    List<Currency> currencies;
-    String message;
+    private List<Currency> currencies;
+    private String message;
 
     public TelegramCommand(List<List<Rate>> ratesList, Output output, List<Currency> currencies) {
         this.ratesList = ratesList;

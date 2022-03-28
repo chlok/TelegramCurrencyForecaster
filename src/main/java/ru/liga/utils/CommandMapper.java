@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Locale;
 
 public class CommandMapper {
-    Algorithm algorithm;
-    Output output;
-    ForecastPeriod forecastPeriod;
-    LocalDate date;
-    List<Currency> currencies = new ArrayList<>();
+    private Algorithm algorithm;
+    private Output output;
+    private ForecastPeriod forecastPeriod;
+    private LocalDate date;
+    private final List<Currency> currencies = new ArrayList<>();
     private static final Logger logger = LoggerFactory.getLogger(CommandMapper.class);
 
     public ServiceCommand mapCommandFromStringArray(String[] strings) {
@@ -95,15 +95,9 @@ public class CommandMapper {
 
     private void setAlgorithm(String string) {
         switch (string) {
-            case "moon" -> {
-                algorithm = Algorithm.MYSTIC;
-            }
-            case "actual" -> {
-                algorithm = Algorithm.ACTUAL;
-            }
-            case "regression" -> {
-                algorithm = Algorithm.LINEAR_REGRESSION;
-            }
+            case "moon" -> algorithm = Algorithm.MYSTIC;
+            case "actual" -> algorithm = Algorithm.ACTUAL;
+            case "regression" -> algorithm = Algorithm.LINEAR_REGRESSION;
             default -> throw new IllegalArgumentException("выбранный алгоритм прогноза не сущестует!");
         }
     }

@@ -2,7 +2,6 @@ package ru.liga.service;
 
 import ru.liga.model.Currency;
 import ru.liga.model.Rate;
-import ru.liga.model.ForecastPeriod;
 
 import java.time.LocalDate;
 import java.util.List;

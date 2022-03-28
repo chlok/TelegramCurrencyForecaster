@@ -3,7 +3,6 @@ package ru.liga.service;
 import ru.liga.model.Currency;
 import ru.liga.model.Rate;
 import ru.liga.repository.RatesRepository;
-import ru.liga.model.ForecastPeriod;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -42,7 +41,7 @@ public class MysticService implements ForecastService {
         while (!currentDate.isAfter(lastDate)) {
             currentDate = currentDate.plusDays(1);
             BigDecimal lastRateValue = rates.get(rates.size() - 1).getRate();
-            double randomValue = ThreadLocalRandom.current().nextDouble(0.9,1.1);
+            double randomValue = ThreadLocalRandom.current().nextDouble(0.9, 1.1);
             BigDecimal randomRate = lastRateValue.multiply(BigDecimal.valueOf(randomValue));
             rates.add(new Rate(currentDate, randomRate, currency));
         }
@@ -51,7 +50,7 @@ public class MysticService implements ForecastService {
 
     private BigDecimal getAverageValue(List<Rate> rates) {
         BigDecimal sum = new BigDecimal(0);
-        for (Rate rate:rates){
+        for (Rate rate : rates) {
             sum = sum.add(rate.getRate());
         }
         return sum.divide(new BigDecimal(rates.size()), 3, RoundingMode.HALF_UP);

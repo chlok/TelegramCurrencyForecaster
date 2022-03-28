@@ -21,7 +21,7 @@ public class ActualService implements ForecastService {
 
     @Override
     public Rate getRate(Currency currency, LocalDate date) {
-        if (date.isAfter(LocalDate.now().plusYears(2))){
+        if (date.isAfter(LocalDate.now().plusYears(2))) {
             throw new IllegalArgumentException("для указанной даты нет актуальных данных за предыдущие годы для расчета");
         }
         List<Rate> lastYearsRates = repository.getTwoAndThreeYearsThisDateRates(currency, date);

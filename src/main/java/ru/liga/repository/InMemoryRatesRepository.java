@@ -74,15 +74,15 @@ public class InMemoryRatesRepository implements RatesRepository {
         return rates;
     }
 
-    private Rate getSomeYearsAgoThisDateRate(List<Rate> rates, LocalDate date, int years){
+    private Rate getSomeYearsAgoThisDateRate(List<Rate> rates, LocalDate date, int years) {
         List<LocalDate> dates = rates.stream()
                 .map(Rate::getDate).toList();
         LocalDate lastDate = date.minusYears(years);
-        while (!dates.contains(lastDate)){
+        while (!dates.contains(lastDate)) {
             lastDate = lastDate.minusDays(1);
         }
         LocalDate finalDate = lastDate;
-        return  rates.stream()
+        return rates.stream()
                 .filter(x -> (x.getDate().equals(finalDate)))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("отсутствуют корректные значения для прогноза в базе данных"));
