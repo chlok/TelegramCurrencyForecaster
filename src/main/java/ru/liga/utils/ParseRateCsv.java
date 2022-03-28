@@ -2,7 +2,6 @@ package ru.liga.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.liga.App;
 import ru.liga.model.Currency;
 import ru.liga.model.Rate;
 
@@ -16,7 +15,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,13 +33,12 @@ public class ParseRateCsv {
      */
 
 
-    public static List<Rate> parse(String filePath) throws IOException {
+    public static List<Rate> parse(String filePath, Currency currency) throws IOException {
         //Загружаем строки из файла
         List<String> fileLines;
         List<Rate> rateList = new ArrayList<>();
         try (InputStream in = ParseRateCsv.class.getResourceAsStream(filePath);
              BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-            reader.readLine();
             fileLines = reader.lines().toList();
         }
 
@@ -62,7 +59,6 @@ public class ParseRateCsv {
             //Создаем сущности на основе полученной информации
             LocalDate date = LocalDate.parse(columnList.get(1), DateTimeUtil.PARSE_FORMATTER);
             BigDecimal rateValue = BigDecimal.valueOf(getDoubleFromStringWithComma(columnList.get(2)));
-            Currency currency = getCurrency(columnList.get(3));
             rateList.add(new Rate(date, rateValue, currency));
         }
         return rateList;

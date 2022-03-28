@@ -17,7 +17,7 @@ public class Rate {
     public Rate(LocalDate dateTime, BigDecimal rate, Currency currency) {
         this.date = dateTime;
         this.currency = currency;
-        this.rate = rate.setScale(3, RoundingMode.HALF_UP);
+        this.rate = rate.setScale(4, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getRate() {

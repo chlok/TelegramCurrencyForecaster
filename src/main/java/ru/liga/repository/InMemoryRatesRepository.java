@@ -29,11 +29,11 @@ public class InMemoryRatesRepository implements RatesRepository {
 
     static {
         try {
-            usd = ParseRateCsv.parse("/USD_F01_02_2005_T05_03_2022.csv");
-            euro = ParseRateCsv.parse("/EUR_F01_02_2005_T05_03_2022.csv");
-            turkey = ParseRateCsv.parse("/TRY_F01_02_2005_T05_03_2022.csv");
-            armenia = ParseRateCsv.parse("/AMD_F01_02_2005_T05_03_2022.csv");
-            bulgaria = ParseRateCsv.parse("/BGN_F01_02_2005_T05_03_2022.csv");
+            usd = ParseRateCsv.parse("/USD_F01_02_2005_T05_03_2022.csv", Currency.USD);
+            euro = ParseRateCsv.parse("/EUR_F01_02_2005_T05_03_2022.csv", Currency.EUR);
+            turkey = ParseRateCsv.parse("/TRY_F01_02_2005_T05_03_2022.csv", Currency.TRY);
+            armenia = ParseRateCsv.parse("/AMD_F01_02_2005_T05_03_2022.csv", Currency.AMD);
+            bulgaria = ParseRateCsv.parse("/BGN_F01_02_2005_T05_03_2022.csv", Currency.BGN);
             moonDates = ParseDatesFile.parse("/FULL_MOONS_F01_01_2021_T31_12_2022");
 
         } catch (IOException e) {
